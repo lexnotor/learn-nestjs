@@ -10,8 +10,13 @@ export class UsersService {
   }
 
   addUser(payload: userType): { data: string[]; message: string } {
-    console.log(payload);
     this.users.push(payload.name);
     return { data: this.users, message: 'added' };
+  }
+
+  deleteUser(payload: userType): { data: string[]; message: string } {
+    const index = this.users.findIndex((item) => item == payload.name);
+    index != -1 && this.users.splice(index, 1);
+    return { data: this.users, message: 'deleted' };
   }
 }

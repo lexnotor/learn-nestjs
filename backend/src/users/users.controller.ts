@@ -1,4 +1,4 @@
-import { Controller, Get, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Post } from '@nestjs/common';
 import { userType } from '.';
 import { UsersService } from './users.service';
 
@@ -12,7 +12,12 @@ export class UsersController {
   }
 
   @Post()
-  addUser(data: userType) {
-    return this.userService.addUser(data);
+  addUser(@Body() payload: userType) {
+    return this.userService.addUser(payload);
+  }
+
+  @Delete()
+  deleteUser(@Body() payload: userType) {
+    return this.userService.deleteUser(payload);
   }
 }
