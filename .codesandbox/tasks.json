@@ -1,0 +1,10 @@
+{
+  "setupTasks": ["npm i -g @nest/cli", "pnpm i"],
+  "tasks": {
+    "dev": {
+      "name": "dev",
+      "command": "pnpm --filter backend run start:dev",
+      "runAtStart": false
+    }
+  }
+}
