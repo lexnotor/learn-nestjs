@@ -1,22 +1,36 @@
 import { Injectable } from '@nestjs/common';
-import type { userType } from '.';
+import { InjectEntityManager } from '@nestjs/typeorm';
+import { EntityManager } from 'typeorm';
+import { UserEntity } from './user.entity';
 
 @Injectable()
 export class UsersService {
-  users = ['Ados', 'Addes', 'Fary', 'Noples'];
+  constructor(
+    @InjectEntityManager() private readonly entityManager: EntityManager,
+  ) {}
 
-  getAllUser(): { data: string[] } {
-    return { data: this.users };
+  users = [];
+
+  async getAllUser(): Promise<{ data: UserEntity[] }> {
+    const data = await this.entityManager.find(UserEntity, {
+      withDeleted: true,
+    });
+    return { data };
+  }
+  async addUser(
+    payload: UserEntity,
+  ): Promise<{ data: UserEntity[]; message: string }> {
+    const data = await this.entityManager.insert(UserEntity, payload);
+    return { data: data.generatedMaps as UserEntity[], message: 'added' };
   }
 
-  addUser(payload: userType): { data: string[]; message: string } {
-    this.users.push(payload.name);
-    return { data: this.users, message: 'added' };
-  }
-
-  deleteUser(payload: userType): { data: string[]; message: string } {
-    const index = this.users.findIndex((item) => item == payload.name);
-    index != -1 && this.users.splice(index, 1);
-    return { data: this.users, message: 'deleted' };
+  async deleteUser(payload: UserEntity): Promise<{
+    data: number;
+    message: string;
+  }> {
+    const data = await this.entityManager.softDelete(UserEntity, {
+      names: payload.names,
+    });
+    return { data: data.affected, message: 'deleted' };
   }
 }
